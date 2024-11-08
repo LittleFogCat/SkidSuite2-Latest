@@ -131,8 +131,9 @@ public class MappingFactory {
 				}
 			}
 			for (MappedMember newMember : newClass.getMethods()) {
-				MappedMember baseMember = ParentUtils.findMethod(baseClass, newMember.getOriginalName(), newMember.getDesc(), true);
-				if (baseMember != null && ParentUtils.matches(baseMember, newMember.getOriginalName(), newMember.getDesc(), true)) {
+				String newMemberDesc = newMember.getDesc().replace(newClass.getNewName(), newClass.getOriginalName());
+				MappedMember baseMember = ParentUtils.findMethod(baseClass, newMember.getOriginalName(), newMemberDesc);
+				if (baseMember != null && ParentUtils.matches(baseMember, newMember.getOriginalName(), newMemberDesc)) {
 					baseMember.setNewName(newMember.getNewName());
 				}
 			}

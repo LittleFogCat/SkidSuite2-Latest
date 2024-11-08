@@ -12,6 +12,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import me.lpk.mapping.MappedClass;
 import me.lpk.mapping.MappedMember;
+import me.lpk.mapping.MethodDesc;
 
 public class ParentUtils {
 	/**
@@ -46,6 +47,19 @@ public class ParentUtils {
 		// Check the class itself
 		for (MappedMember mm : owner.getMethods()) {
 			if (matches(mm, name, desc, originalNames)) {
+				return mm;
+			}
+		}
+		return null;
+	}
+
+    /**
+     * Find the method with the name `name` and description `desc` in the class `owner`
+     */
+	public static MappedMember findMethod(MappedClass owner, String name, String desc) {
+		// Check the class itself
+		for (MappedMember mm : owner.getMethods()) {
+			if (matches(mm, name, desc)) {
 				return mm;
 			}
 		}
@@ -221,6 +235,20 @@ public class ParentUtils {
 	 */
 	public static boolean matches(MappedMember mm, MappedMember mm2, boolean orig) {
 		return matches(mm, orig ? mm2.getOriginalName() : mm2.getNewName(), mm2.getDesc(), true);
+	}
+
+	public static boolean matches(MappedMember mm, String name, String desc) {
+		return name.equals(mm.getOriginalName()) && isDescSame(desc, mm.getDesc());
+	}
+
+	private static boolean isDescSame(String desc1, String desc2) {
+		if (desc1.equals(desc2)) {
+			return true;
+		}
+		MethodDesc md1 = MethodDesc.from(desc1);
+		MethodDesc md2 = MethodDesc.from(desc2);
+
+		return md1.paramTypes.equals(md2.paramTypes); // Only compare param type
 	}
 
 	public static boolean isLoop(ClassNode node, Map<String, ClassNode> nodes, int i) {
